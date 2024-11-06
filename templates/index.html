@@ -1,0 +1,129 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="title-container">
+        <h3 class="main-title">Customer Churn Prediction</h1>
+        <p class="subtitle">Predict customer behavior</p>
+    </div>
+
+    <div class="main-container">
+        <form id="prediction-form" class="prediction-form">
+            <div class="form-group">
+                <label for="geography">Geography:</label>
+                <select name="geography" id="geography" required>
+                    {% for option in geography_options %}
+                    <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select name="gender" id="gender" required>
+                    {% for option in gender_options %}
+                    <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age: <span id="age-value">30</span></label>
+                <input type="range" name="age" id="age" min="18" max="92" value="30" required>
+            </div>
+
+            <div class="form-group">
+                <label for="balance">Balance:</label>
+                <input type="number" name="balance" id="balance" required placeholder="Enter balance">
+            </div>
+
+            <div class="form-group">
+                <label for="credit_score">Credit Score:</label>
+                <input type="number" name="credit_score" id="credit_score" required placeholder="Enter credit score">
+            </div>
+
+            <div class="form-group">
+                <label for="estimated_salary">Estimated Salary:</label>
+                <input type="number" name="estimated_salary" id="estimated_salary" required placeholder="Enter estimated salary">
+            </div>
+
+            <div class="form-group">
+                <label for="tenure">Tenure: <span id="tenure-value">5</span></label>
+                <input type="range" name="tenure" id="tenure" min="0" max="10" value="5" required>
+            </div>
+
+            <div class="form-group">
+                <label for="num_of_products">Number of Products: <span id="products-value">1</span></label>
+                <input type="range" name="num_of_products" id="num_of_products" min="1" max="4" value="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="has_cr_card">Has Credit Card:</label>
+                <select name="has_cr_card" id="has_cr_card" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="is_active_member">Is Active Member:</label>
+                <select name="is_active_member" id="is_active_member" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">Predict Churn</button>
+        </form>
+
+        <div id="prediction-result" class="prediction-result" style="display: none;">
+            <h3>Prediction Result</h3>
+            <p id="prediction-text"></p>
+        </div>
+    </div>
+
+    <script>
+        // Update range input displays
+        document.getElementById('age').addEventListener('input', function() {
+            document.getElementById('age-value').textContent = this.value;
+        });
+        
+        document.getElementById('tenure').addEventListener('input', function() {
+            document.getElementById('tenure-value').textContent = this.value;
+        });
+        
+        document.getElementById('num_of_products').addEventListener('input', function() {
+            document.getElementById('products-value').textContent = this.value;
+        });
+
+        // Handle form submission
+        $('#prediction-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                url: '/predict',
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('#prediction-result').show();
+                    const probability = (response.probability * 100).toFixed(2);
+                    const predictionText = response.will_churn 
+                        ? `The customer is likely to churn (${probability}% probability).`
+                        : `The customer is not likely to churn (${probability}% probability).`;
+                    $('#prediction-text').text(predictionText);
+                },
+                error: function() {
+                    alert('Error making prediction. Please try again.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
