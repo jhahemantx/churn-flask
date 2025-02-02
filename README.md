@@ -4,7 +4,6 @@
 This project is a **Customer Churn Prediction** web application built using **Flask** and a **TensorFlow** deep learning model. The app predicts whether a customer is likely to churn based on various input features.
 
 ## Features
-- Uses a **deep learning model** (`model.h5`) for churn prediction.
 - Accepts customer details such as **credit score, age, tenure, balance, etc.**
 - Encodes categorical features (`Gender` and `Geography`) using **LabelEncoder** and **OneHotEncoder**.
 - Scales numerical inputs using **StandardScaler**.
